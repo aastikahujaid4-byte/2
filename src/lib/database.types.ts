@@ -32,13 +32,25 @@ export type Database = {
         Row: {
           id: string;
           user_id: string;
-          lab_id: string | null;
-          completed: boolean;
-          completed_at: string | null;
+          module_name: string;
+          module_level: string;
+          points: number;
+          completed_at: string;
           created_at: string;
         };
         Insert: Omit<Database['public']['Tables']['user_progress']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['user_progress']['Insert']>;
+      };
+      daily_activity: {
+        Row: {
+          id: string;
+          user_id: string;
+          activity_date: string;
+          modules_completed: number;
+          created_at: string;
+        };
+        Insert: Omit<Database['public']['Tables']['daily_activity']['Row'], 'id' | 'created_at'>;
+        Update: Partial<Database['public']['Tables']['daily_activity']['Insert']>;
       };
       store_products: {
         Row: {

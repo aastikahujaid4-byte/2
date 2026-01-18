@@ -1,11 +1,101 @@
+import { useState, useEffect } from 'react';
 import { Target, Zap, Award, TrendingUp } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export function Dashboard() {
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [labsCompleted, setLabsCompleted] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [skillLevel, setSkillLevel] = useState('Beginner');
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      const { data: progressData, error } = await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', 'default_user');
+
+      if (error) throw error;
+
+      if (progressData) {
+        const points = progressData.reduce((sum, item) => sum + item.points, 0);
+        setTotalPoints(points);
+        setLabsCompleted(progressData.length);
+
+        if (progressData.length === 0) {
+          setSkillLevel('Beginner');
+        } else if (progressData.length < 4) {
+          setSkillLevel('Beginner');
+        } else if (progressData.length < 8) {
+          setSkillLevel('Intermediate');
+        } else {
+          setSkillLevel('Advanced');
+        }
+      }
+
+      const { data: activityData } = await supabase
+        .from('daily_activity')
+        .select('activity_date')
+        .eq('user_id', 'default_user')
+        .order('activity_date', { ascending: false });
+
+      if (activityData && activityData.length > 0) {
+        const streak = calculateStreak(activityData.map(a => a.activity_date));
+        setCurrentStreak(streak);
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    }
+  };
+
+  const calculateStreak = (dates: string[]) => {
+    if (dates.length === 0) return 0;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const sortedDates = dates
+      .map(d => new Date(d))
+      .sort((a, b) => b.getTime() - a.getTime());
+
+    const mostRecent = sortedDates[0];
+    mostRecent.setHours(0, 0, 0, 0);
+
+    if (mostRecent.getTime() !== today.getTime() && mostRecent.getTime() !== yesterday.getTime()) {
+      return 0;
+    }
+
+    let streak = 0;
+    let currentDate = new Date(today);
+    currentDate.setHours(0, 0, 0, 0);
+
+    for (const date of sortedDates) {
+      const checkDate = new Date(date);
+      checkDate.setHours(0, 0, 0, 0);
+
+      if (checkDate.getTime() === currentDate.getTime()) {
+        streak++;
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else if (checkDate.getTime() < currentDate.getTime()) {
+        break;
+      }
+    }
+
+    return streak;
+  };
+
   const stats = [
-    { label: 'Labs Completed', value: '0', icon: Target, color: 'bg-blue-500' },
-    { label: 'Points Earned', value: '0', icon: Award, color: 'bg-emerald-500' },
-    { label: 'Current Streak', value: '0 days', icon: Zap, color: 'bg-yellow-500' },
-    { label: 'Skill Level', value: 'Beginner', icon: TrendingUp, color: 'bg-purple-500' },
+    { label: 'Labs Completed', value: labsCompleted.toString(), icon: Target, color: 'bg-blue-500' },
+    { label: 'Points Earned', value: totalPoints.toString(), icon: Award, color: 'bg-emerald-500' },
+    { label: 'Current Streak', value: `${currentStreak} ${currentStreak === 1 ? 'day' : 'days'}`, icon: Zap, color: 'bg-yellow-500' },
+    { label: 'Skill Level', value: skillLevel, icon: TrendingUp, color: 'bg-teal-500' },
   ];
 
   return (
@@ -39,7 +129,7 @@ export function Dashboard() {
         </p>
         <div className="flex flex-wrap gap-4">
           <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-            <span className="font-semibold">8 Vulnerability Types</span>
+            <span className="font-semibold">12 Learning Modules</span>
           </div>
           <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
             <span className="font-semibold">Interactive Labs</span>

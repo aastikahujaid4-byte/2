@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, Circle, Lock, BookOpen } from 'lucide-react';
 import { ModuleContent } from './ModuleContent';
+import { supabase } from '../lib/supabase';
 
 interface Module {
   name: string;
@@ -8,6 +9,7 @@ interface Module {
   locked: boolean;
   description: string;
   duration: string;
+  points: number;
 }
 
 interface LearningPathProps {
@@ -21,6 +23,7 @@ interface CompletedModules {
 export function LearningPath({ onModuleStart }: LearningPathProps) {
   const [activeModule, setActiveModule] = useState<{ name: string; level: string } | null>(null);
   const [completedModules, setCompletedModules] = useState<CompletedModules>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const initialPaths = [
     {
@@ -33,6 +36,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: false,
           description: 'Learn the fundamentals of web security and common attack vectors.',
           duration: '30 mins',
+          points: 100,
         },
         {
           name: 'SQL Injection Basics',
@@ -40,6 +44,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: false,
           description: 'Understand how SQL injection attacks work and how to exploit them.',
           duration: '45 mins',
+          points: 150,
         },
         {
           name: 'Cross-Site Scripting (XSS)',
@@ -47,6 +52,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: false,
           description: 'Learn about reflected, stored, and DOM-based XSS vulnerabilities.',
           duration: '40 mins',
+          points: 150,
         },
         {
           name: 'Basic Authentication',
@@ -54,6 +60,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: false,
           description: 'Explore common authentication vulnerabilities and bypass techniques.',
           duration: '35 mins',
+          points: 100,
         },
       ],
     },
@@ -67,6 +74,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Master blind SQL injection and advanced exploitation techniques.',
           duration: '60 mins',
+          points: 200,
         },
         {
           name: 'CSRF Attacks',
@@ -74,6 +82,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Understand Cross-Site Request Forgery and token validation.',
           duration: '45 mins',
+          points: 150,
         },
         {
           name: 'Session Management',
@@ -81,6 +90,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Learn about session fixation and hijacking attacks.',
           duration: '50 mins',
+          points: 175,
         },
         {
           name: 'File Upload Vulnerabilities',
@@ -88,6 +98,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Exploit unrestricted file upload functionality.',
           duration: '55 mins',
+          points: 175,
         },
       ],
     },
@@ -101,6 +112,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Master XML External Entity injection attacks.',
           duration: '70 mins',
+          points: 250,
         },
         {
           name: 'SSRF Attacks',
@@ -108,6 +120,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Learn Server-Side Request Forgery exploitation.',
           duration: '65 mins',
+          points: 225,
         },
         {
           name: 'Deserialization Attacks',
@@ -115,6 +128,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Exploit insecure deserialization vulnerabilities.',
           duration: '75 mins',
+          points: 250,
         },
         {
           name: 'Advanced Exploit Chains',
@@ -122,6 +136,7 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
           locked: true,
           description: 'Chain multiple vulnerabilities for maximum impact.',
           duration: '90 mins',
+          points: 300,
         },
       ],
     },
@@ -149,6 +164,10 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
   };
 
   useEffect(() => {
+    loadCompletedModules();
+  }, []);
+
+  useEffect(() => {
     const beginnerModules = initialPaths[0].modules.map(m => m.name);
     const intermediateModules = initialPaths[1].modules.map(m => m.name);
 
@@ -167,6 +186,29 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
       }
     }
   }, [completedModules]);
+
+  const loadCompletedModules = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_progress')
+        .select('module_name')
+        .eq('user_id', 'default_user');
+
+      if (error) throw error;
+
+      if (data) {
+        const completed: CompletedModules = {};
+        data.forEach((item) => {
+          completed[item.module_name] = true;
+        });
+        setCompletedModules(completed);
+      }
+    } catch (error) {
+      console.error('Error loading progress:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getUpdatedPaths = () => {
     const beginnerModules = initialPaths[0].modules.map(m => m.name);
@@ -202,12 +244,54 @@ export function LearningPath({ onModuleStart }: LearningPathProps) {
     onModuleStart?.(moduleName, levelName);
   };
 
-  const handleModuleComplete = () => {
+  const handleModuleComplete = async () => {
     if (activeModule) {
-      setCompletedModules({
-        ...completedModules,
-        [activeModule.name]: true,
-      });
+      const module = initialPaths
+        .flatMap(p => p.modules)
+        .find(m => m.name === activeModule.name);
+
+      if (module) {
+        try {
+          await supabase
+            .from('user_progress')
+            .insert({
+              user_id: 'default_user',
+              module_name: activeModule.name,
+              module_level: activeModule.level,
+              points: module.points,
+            });
+
+          const today = new Date().toISOString().split('T')[0];
+          const { data: existingActivity } = await supabase
+            .from('daily_activity')
+            .select('*')
+            .eq('user_id', 'default_user')
+            .eq('activity_date', today)
+            .maybeSingle();
+
+          if (existingActivity) {
+            await supabase
+              .from('daily_activity')
+              .update({ modules_completed: existingActivity.modules_completed + 1 })
+              .eq('id', existingActivity.id);
+          } else {
+            await supabase
+              .from('daily_activity')
+              .insert({
+                user_id: 'default_user',
+                activity_date: today,
+                modules_completed: 1,
+              });
+          }
+
+          setCompletedModules({
+            ...completedModules,
+            [activeModule.name]: true,
+          });
+        } catch (error) {
+          console.error('Error saving progress:', error);
+        }
+      }
     }
     setActiveModule(null);
   };
