@@ -28,31 +28,267 @@ export function ToolPage({ toolId, onClose }: ToolPageProps) {
       title: 'Nmap Network Scanner',
       description: 'Advanced network discovery and security auditing tool',
       icon: '🔍',
+      details: `Nmap (Network Mapper) is a free and open-source utility for network discovery and security auditing. It's one of the most powerful tools in a security professional's arsenal.
+
+KEY FEATURES:
+• Port Scanning: Discover open, closed, and filtered ports on target systems
+• Service Detection: Identify services running on discovered ports
+• OS Fingerprinting: Determine the operating system of target devices
+• Vulnerability Assessment: Find potential security weaknesses
+• Network Mapping: Create visual maps of network topology
+
+HOW IT WORKS:
+1. Sends probe packets to target ports
+2. Analyzes responses to determine port status
+3. Identifies services based on port signatures
+4. Reports findings in structured format
+
+COMMON USE CASES:
+• Security audits and penetration testing
+• Network inventory and asset management
+• Compliance verification
+• Incident response and forensics
+
+IMPORTANT NOTES:
+• Only scan networks/systems you own or have permission to test
+• Unauthorized scanning may be illegal
+• Use responsibly and ethically`,
     },
     wireshark: {
       title: 'Wireshark Packet Analyzer',
       description: 'Capture and analyze network traffic in real-time',
       icon: '📡',
+      details: `Wireshark is the world's foremost and widely-used network protocol analyzer. It allows you to see what's happening on your network in real time.
+
+KEY FEATURES:
+• Live Packet Capture: Monitor network traffic in real-time
+• Deep Inspection: Examine packet contents at multiple protocol layers
+• Protocol Support: Decode hundreds of network protocols
+• Filtering: Focus on specific traffic with powerful filters
+• Statistical Analysis: Generate graphs and statistics about network activity
+
+HOW IT WORKS:
+1. Captures network packets as they traverse the network
+2. Decodes packet headers and payload data
+3. Displays information in hierarchical format
+4. Allows drilling into packet details
+
+COMMON USE CASES:
+• Network troubleshooting and diagnostics
+• Network security analysis
+• Protocol development and testing
+• Educational purposes
+• Detecting malware and suspicious activity
+
+WHAT YOU CAN ANALYZE:
+• HTTP/HTTPS requests and responses
+• DNS queries and responses
+• TCP/UDP connections
+• Encryption protocols (SSL/TLS)
+• Application layer protocols
+
+IMPORTANT NOTES:
+• Only capture traffic on networks you own or have permission to monitor
+• Capturing encrypted traffic typically shows only metadata
+• Local network capture is usually sufficient for diagnostics`,
     },
     encryption: {
       title: 'File Encryption Tool',
       description: 'Encrypt sensitive files using AES-256 encryption',
       icon: '🔐',
+      details: `This tool provides AES-256 encryption, one of the most secure encryption standards available. It's used by governments and organizations worldwide.
+
+KEY FEATURES:
+• AES-256 Encryption: Military-grade encryption standard
+• User-Defined Keys: Create your own encryption keys
+• Full File Support: Encrypt any type of file or text
+• Simple Interface: Easy-to-use encryption process
+• Secure Output: Base64 encoded encrypted data
+
+HOW ENCRYPTION WORKS:
+1. You provide plaintext (readable data) and a secret key
+2. The AES-256 algorithm scrambles the data using the key
+3. Without the correct key, the data is unreadable
+4. Output can be safely stored or transmitted
+
+SECURITY PROPERTIES:
+• 256-bit key strength: 2^256 possible combinations
+• Computationally infeasible to crack with brute force
+• Industry standard for protecting sensitive data
+• No known practical attacks on AES-256
+
+BEST PRACTICES:
+• Use strong, unique encryption keys (mix letters, numbers, symbols)
+• Store keys securely, separate from encrypted data
+• Never share your encryption keys
+• Keep backups of both keys and encrypted files
+• Document which files are encrypted and with which keys
+
+USE CASES:
+• Protecting confidential documents
+• Securing sensitive business data
+• Medical and legal records protection
+• Personal information security
+• Compliance with data protection regulations`,
     },
     decryption: {
       title: 'File Decryption Tool',
       description: 'Decrypt encrypted files with the correct key',
       icon: '🔓',
+      details: `This tool reverses the encryption process, converting encrypted data back to its original readable form using the correct decryption key.
+
+KEY FEATURES:
+• AES-256 Decryption: Reverse the encryption process
+• Key Verification: Validates the decryption key
+• Error Handling: Reports when keys are incorrect
+• Data Recovery: Restore access to encrypted information
+• Safe Process: No data loss during decryption
+
+HOW DECRYPTION WORKS:
+1. You provide encrypted data and the decryption key
+2. The tool verifies the key matches the encrypted data
+3. If correct, the original data is restored
+4. If incorrect, decryption fails and prevents data corruption
+
+IMPORTANT CONCEPTS:
+• Key Dependency: Decryption REQUIRES the original encryption key
+• No Master Key: Lost keys cannot recover encrypted data
+• Key Matching: Even slight key differences prevent decryption
+• One-Way Security: Only correct key can decrypt data
+
+WHAT HAPPENS IF KEY IS WRONG:
+• Decryption fails safely
+• Original encrypted data remains intact
+• Error message indicates failure
+• No data corruption occurs
+
+RECOVERY TIPS:
+• Always store encryption keys securely
+• Use password managers for key storage
+• Keep backups of critical keys
+• Document key creation dates and purposes
+• Test decryption occasionally to ensure keys work
+
+COMMON ISSUES:
+• Forgot the encryption key → Cannot decrypt
+• Key corrupted → Decryption fails
+• Wrong file/key pair → Decryption fails
+• Key format changed → May not be recognized`,
     },
     hash: {
       title: 'Cryptographic Hash Generator',
       description: 'Generate secure hashes (MD5, SHA-1, SHA-256)',
       icon: '#️⃣',
+      details: `Cryptographic hashing creates a unique "fingerprint" of data. Any change to the data produces a completely different hash.
+
+KEY FEATURES:
+• SHA-256 Hash: Modern, secure hashing algorithm
+• Unique Fingerprints: Every input produces unique output
+• Deterministic: Same input always produces same hash
+• One-Way Function: Cannot reverse hash back to original data
+• Fixed Output: SHA-256 always produces 256-bit (64 character) hash
+
+HOW HASHING WORKS:
+1. Input any text or data
+2. Algorithm processes the data mathematically
+3. Produces a fixed-size hash string
+4. Even tiny input changes drastically change the output
+
+HASH PROPERTIES:
+• Deterministic: Same input = same hash every time
+• Quick Computation: Fast to calculate
+• Avalanche Effect: Small input change = completely different hash
+• Collision Resistant: Nearly impossible to find two inputs with same hash
+• One-Way: Cannot reverse the hash process
+
+WHY USE HASHES:
+• Password Verification: Store hashes instead of passwords
+• Data Integrity: Detect if data has been modified
+• Digital Signatures: Verify document authenticity
+• Malware Detection: Identify known malicious files
+• Deduplication: Identify duplicate files
+
+COMMON ALGORITHMS:
+• MD5: DEPRECATED - cryptographically broken
+• SHA-1: DEPRECATED - has vulnerabilities
+• SHA-256: RECOMMENDED - secure and widely used
+• SHA-3: MODERN - latest standard
+
+REAL-WORLD EXAMPLES:
+• Password storage: Hash the password, store the hash
+• File verification: Compare file hash with known good hash
+• Software downloads: Verify downloaded files are authentic
+• Blockchain: Bitcoin uses SHA-256 for security
+
+IMPORTANT NOTES:
+• Hashes are NOT encryption (cannot be reversed)
+• Different from encryption - no key needed
+• Use SHA-256 for new applications
+• Never rely on MD5 or SHA-1 for security`,
     },
     password: {
       title: 'Password Strength Analyzer',
       description: 'Test and improve your password security',
       icon: '🔑',
+      details: `A strong password is your first line of defense against unauthorized access. This tool evaluates password strength based on security best practices.
+
+KEY FEATURES:
+• Strength Assessment: Rate password security level
+• Real-Time Feedback: Get instant improvement suggestions
+• Multi-Factor Evaluation: Check multiple security criteria
+• Best Practices: Follow industry-standard requirements
+• Non-Invasive: Your password is never stored or transmitted
+
+STRENGTH CRITERIA:
+✓ Length: Minimum 8 characters (longer is better)
+✓ Lowercase: Include a-z letters
+✓ Uppercase: Include A-Z letters
+✓ Numbers: Include 0-9 digits
+✓ Special Characters: Include !@#$%^&* etc.
+
+STRENGTH LEVELS:
+1 Factor: Very Weak - Easily cracked (minutes)
+2 Factors: Weak - Crackable (hours to days)
+3 Factors: Fair - Moderate security (months)
+4 Factors: Strong - Good protection (years)
+5 Factors: Very Strong - Excellent security (centuries)
+
+PASSWORD CREATION TIPS:
+• Minimum 12 characters recommended
+• Mix uppercase, lowercase, numbers, symbols
+• Avoid dictionary words and common patterns
+• Don't use personal information (names, birthdays)
+• Never reuse passwords across accounts
+• Use unique password for each important account
+
+EXAMPLES:
+❌ Weak: "password123" (predictable)
+❌ Weak: "John2023" (personal info)
+✓ Good: "MyDog@Runs#2023"
+✓ Strong: "K9%mL@xP7wR$nQ2!"
+✓ Excellent: "Tr0pic@l*Sunset#82!vM4x"
+
+ATTACK METHODS PASSWORDS PROTECT AGAINST:
+• Dictionary Attacks: Trying common passwords
+• Brute Force: Trying all combinations
+• Rainbow Tables: Pre-computed password hashes
+• Social Engineering: Guessing from personal info
+• Keyloggers: Recording keystrokes
+
+PASSWORD MANAGER BENEFITS:
+• Generate truly random passwords
+• Store passwords securely encrypted
+• Unique password per account
+• No need to remember complex passwords
+• Alerts for weak or reused passwords
+
+CRITICAL SECURITY PRACTICES:
+• Never write passwords on sticky notes
+• Don't share passwords via email or chat
+• Use password manager for storage
+• Enable two-factor authentication when available
+• Change passwords if compromised
+• Log out after using shared computers`,
     },
   };
 
@@ -173,6 +409,15 @@ export function ToolPage({ toolId, onClose }: ToolPageProps) {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Tool Overview</h2>
+          <div className="prose prose-sm max-w-none">
+            <pre className="bg-white p-6 rounded-lg overflow-x-auto text-sm text-gray-700 whitespace-pre-wrap font-sans leading-relaxed">
+              {info && info.details ? info.details : 'Loading tool information...'}
+            </pre>
+          </div>
+        </div>
+
         {toolId === 'nmap' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
